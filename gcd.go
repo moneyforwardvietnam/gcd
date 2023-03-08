@@ -311,7 +311,12 @@ func (c *Gcd) getConnectableTargets() ([]*TargetInfo, error) {
 
 // NewTab a new empty tab, returns the chrome target.
 func (c *Gcd) NewTab() (*ChromeTarget, error) {
-	resp, err := http.Get(c.apiEndpoint + "/new")
+	//GET and POST are deprecated: https://crrev.com/c/3595822
+	putReq, err := http.NewRequest(http.MethodPut, c.apiEndpoint+"/new", nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := http.DefaultClient.Do(putReq)
 	if err != nil {
 		return nil, err
 	}
